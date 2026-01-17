@@ -1,73 +1,35 @@
-# React + TypeScript + Vite
+# 🎨 WoL Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Modern React UI built with performance and aesthetics in mind.
 
-Currently, two official plugins are available:
+## ⚡ Tech Stack
+* **Runtime/Package Manager:** [Bun](https://bun.sh)
+* **Build Tool:** [Vite](https://vitejs.dev)
+* **Framework:** React (TypeScript)
+* **Styling:** [Tailwind CSS v4](https://tailwindcss.com)
+* **Components:** [shadcn/ui](https://ui.shadcn.com)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Commands
 
-## React Compiler
+| Command | Description |
+| :--- | :--- |
+| `bun install` | Install dependencies |
+| `bun dev` | Start dev server (Port 5173) |
+| `bun run build` | Compile for production (Output to `/dist`) |
+| `bun lint` | Run ESLint |
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Components (shadcn/ui)
 
-## Expanding the ESLint configuration
+To add new components, use the shadcn CLI via bunx:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+```bash
+bunx --bun shadcn@latest add <component-name>
+# Example:
+bunx --bun shadcn@latest add card dialog dropdown-menu
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Proxy Setup
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+The `vite.config.ts` is configured to proxy `/api` requests to `http://127.0.0.1:3000`. Ensure the Rust backend is running on port 3000 during development.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
