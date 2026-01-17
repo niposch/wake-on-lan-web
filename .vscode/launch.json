@@ -1,0 +1,38 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Backend (Rust)",
+      "type": "lldb",
+      "request": "launch",
+      // Point this to where cargo outputs the binary.
+      // On Windows, strictly add .exe. On Mac/Linux remove it.
+      "program": "${workspaceFolder}/backend/target/debug/backend.exe",
+      "args": [],
+      "cwd": "${workspaceFolder}/backend",
+      "env": {
+        "RUST_LOG": "debug",
+        "RUST_BACKTRACE": "1",
+        "DATABASE_URL": "sqlite:wol.db"
+      },
+      // This ensures it recompiles before running
+      "preLaunchTask": "build backend",
+      "sourceLanguages": ["rust"]
+    },
+    {
+      "name": "Debug Frontend (Chrome)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:5173",
+      // This maps the files in Chrome devtools back to your source code
+      "webRoot": "${workspaceFolder}/frontend/src",
+      "userDataDir": "${workspaceFolder}/.vscode/chrome-debug-profile"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Full Stack Debug",
+      "configurations": ["Debug Backend (Rust)", "Debug Frontend (Chrome)"]
+    }
+  ]
+}
