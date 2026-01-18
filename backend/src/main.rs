@@ -1,10 +1,14 @@
 mod db;
+mod api;
 
 use sqlx::sqlite::SqlitePoolOptions;
 use tower_http::services::ServeDir;
-use axum::{Router, routing::get};
+use axum::{Router, routing::{get, post, put, delete}};
+use api::users;
+use utoipa::OpenApi;
+use utoipa_swagger_ui::SwaggerUi;
 
-use crate::db::AppState;
+use crate::{api::users::UserApi, db::AppState};
 
 use axum::{extract::State, http::StatusCode, Json};
 
@@ -19,9 +23,29 @@ pub async fn health_check(
     }
 }
 
+#[derive(OpenApi)]
+#[openapi(
+    // We leave 'paths' empty here because we are merging modules below
+    paths(), 
+    tags(
+        (name = "wol-app", description = "Wake-on-LAN API")
+    )
+)]
+struct ApiDoc;
+
 #[tokio::main]
 async fn main() {
-    let api_routes = Router::new();
+    let api_routes = Router::new()
+        .route("/login", post(users::login))
+        .route("/users", get(users::list_users).post(users::create_user))
+        .route("/users/{id}", delete(users::delete_user))
+        .route("/users/{id}/role", put(users::update_role))
+        .route("/users/{id}/reset-password", post(users::admin_reset_password));
+
+    // MERGE the module docs here
+    let mut doc = ApiDoc::openapi();
+    doc.merge(UserApi::openapi()); // <--- This pulls in all User paths & components
+
 
     let static_files = ServeDir::new("./static_files");
 
@@ -39,6 +63,7 @@ async fn main() {
     };
 
     let app = Router::new()
+        .merge(SwaggerUi::new("/swagger").url("/api/openapi.json", doc.into()))
         .nest("/api", api_routes)
         .route("/api/health", get(health_check))
         .fallback_service(static_files)
