@@ -15,6 +15,7 @@ export interface Device {
     broadcast_addr?: string;
     icon?: string;
     is_online: boolean;
+    can_shutdown: boolean;
     last_seen_at?: string;
 }
 
