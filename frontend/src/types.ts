@@ -44,6 +44,15 @@ export interface RefreshTokenResponse {
     refresh_token: string;
 }
 
+export interface AdminResetPasswordRequest {
+    new_password?: string;
+}
+
+export interface AdminResetPasswordResponse {
+    message: string;
+    password?: string;
+}
+
 export interface CreateDeviceRequest {
     name: string;
     mac_address: string;

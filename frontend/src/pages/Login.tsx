@@ -34,6 +34,13 @@ export default function LoginPage() {
         }
     };
 
+    const isDemo = import.meta.env.VITE_USE_MOCK_API === 'true';
+
+    const fillCredentials = (role: 'admin' | 'user') => {
+        setUsername(role);
+        setPassword(role);
+    };
+
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
             <div className="mb-8 flex flex-col items-center gap-2">
@@ -100,6 +107,20 @@ export default function LoginPage() {
                     </CardFooter>
                 </form>
             </Card>
+
+            {isDemo && (
+                <div className="mt-8 text-center space-y-3">
+                    <p className="text-sm text-muted-foreground font-medium">Demo Mode Quick Login</p>
+                    <div className="flex gap-3">
+                        <Button variant="outline" size="sm" onClick={() => fillCredentials('admin')}>
+                            Auto-fill Admin
+                        </Button>
+                        <Button variant="outline" size="sm" onClick={() => fillCredentials('user')}>
+                            Auto-fill User
+                        </Button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

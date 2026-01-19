@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type { ApiService } from './api.interface';
 import type { 
-    User, Device, LoginRequest, LoginResponse, CreateUserRequest, CreateDeviceRequest, UpdateDeviceRequest, RefreshTokenResponse
+    User, Device, LoginRequest, LoginResponse, CreateUserRequest, CreateDeviceRequest, UpdateDeviceRequest, RefreshTokenResponse, AdminResetPasswordRequest, AdminResetPasswordResponse 
 } from '../types';
 
 const API_URL = '/api';
@@ -116,8 +116,9 @@ export const api: ApiService = {
         await client.put(`/users/${id}/status`, { is_disabled });
     },
 
-    async resetUserPassword(id: number, data: { new_password: string }): Promise<void> {
-        await client.post(`/users/${id}/reset-password`, data);
+    async resetUserPassword(id: number, data: AdminResetPasswordRequest): Promise<AdminResetPasswordResponse> {
+        const response = await client.post<AdminResetPasswordResponse>(`/users/${id}/reset-password`, data);
+        return response.data;
     },
 
     async changePassword(data: { old_password: string, new_password: string }): Promise<void> {

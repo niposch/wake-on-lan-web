@@ -45,20 +45,37 @@ The API will be available at `http://localhost:3000`.
 Swagger UI: `http://localhost:3000/swagger/`
 
 ### Frontend Setup
-
-1.  Navigate to `frontend`:
-    ```bash
-    cd frontend
-    ```
+1.  Navigate to `frontend/`.
 2.  Install dependencies:
     ```bash
     npm install
     ```
-3.  Build for production:
+3.  Start the development server:
     ```bash
-    npm run build
+    npm run dev
     ```
-    The output will be in `dist/`.
+
+## Demo Mode
+
+YouCan run the frontend in a standalone "Demo Mode" without the Rust backend. This mode uses a mock API service that simulates all backend functionality (authentication, database operations, device state) within the browser using LocalStorage.
+
+To start Demo Mode:
+
+1.  Navigate to `frontend/`.
+2.  Run:
+    ```bash
+    npm run demo
+    ```
+
+**Default Credentials:**
+-   **Admin:** `admin` / `admin`
+-   **User:** `user` / `user`
+
+*Note: Data changes in demo mode are persisted in your browser's LocalStorage. Clear your browser data to reset the demo state.*
+
+## API Documentation
+When the backend is running, the Swagger UI is available at:
+`http://localhost:3000/swagger`
 
 ### Running in Production
 

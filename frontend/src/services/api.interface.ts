@@ -1,5 +1,5 @@
 import type { 
-    User, Device, LoginRequest, LoginResponse, CreateUserRequest, CreateDeviceRequest, UpdateDeviceRequest 
+    User, Device, LoginRequest, LoginResponse, CreateUserRequest, CreateDeviceRequest, UpdateDeviceRequest, AdminResetPasswordRequest, AdminResetPasswordResponse 
 } from '../types';
 
 export interface ApiService {
@@ -14,7 +14,7 @@ export interface ApiService {
     deleteUser(id: number): Promise<void>;
     updateUserRole(id: number, role: 'admin' | 'user'): Promise<void>;
     updateUserStatus(id: number, is_disabled: boolean): Promise<void>;
-    resetUserPassword(id: number, data: { new_password: string }): Promise<void>;
+    resetUserPassword(id: number, data: AdminResetPasswordRequest): Promise<AdminResetPasswordResponse>;
     changePassword(data: { old_password: string, new_password: string }): Promise<void>;
     
     // Devices

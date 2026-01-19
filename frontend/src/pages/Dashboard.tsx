@@ -54,6 +54,13 @@ export default function Dashboard() {
 
     useEffect(() => {
         loadDevices();
+        
+        // Poll for status updates every 5 seconds
+        const interval = setInterval(() => {
+            loadDevices();
+        }, 5000);
+
+        return () => clearInterval(interval);
     }, []);
 
     const loadDevices = async () => {

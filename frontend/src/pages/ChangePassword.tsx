@@ -11,7 +11,7 @@ import { toast } from 'sonner';
 
 export default function ChangePasswordPage() {
     const navigate = useNavigate();
-    const { user } = useAuth();
+    const { user, refreshUser } = useAuth();
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -31,6 +31,7 @@ export default function ChangePasswordPage() {
 
         try {
             await api.changePassword({ old_password: oldPassword, new_password: newPassword });
+            await refreshUser();
             toast.success("Password changed successfully");
             navigate('/');
         } catch (err: any) {

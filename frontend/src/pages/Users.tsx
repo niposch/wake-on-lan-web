@@ -13,7 +13,7 @@ export default function UsersPage() {
     const [users, setUsers] = useState<User[]>([]);
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const [newUsername, setNewUsername] = useState('');
-    const [createdCreds, setCreatedCreds] = useState<{username: string, password: string} | null>(null);
+    const [createdCreds, setCreatedCreds] = useState<{username: string, password: string, title: string} | null>(null);
 
     useEffect(() => {
         loadUsers();
@@ -32,7 +32,11 @@ export default function UsersPage() {
         e.preventDefault();
         try {
             const result = await api.createUser({ username: newUsername });
-            setCreatedCreds({ username: result.user.username, password: result.password });
+            setCreatedCreds({ 
+                username: result.user.username, 
+                password: result.password,
+                title: "User Created!"
+            });
             setIsCreateOpen(false);
             setNewUsername('');
             loadUsers();
@@ -54,12 +58,23 @@ export default function UsersPage() {
     };
 
     const handleResetPassword = async (id: number) => {
-        const newPassword = prompt("Enter new temporary password for user:");
-        if (!newPassword) return;
+        if (!confirm("Are you sure you want to reset this user's password?")) return;
 
         try {
-            await api.resetUserPassword(id, { new_password: newPassword });
-            toast.success("Password reset successfully");
+            const response = await api.resetUserPassword(id, {});
+            loadUsers();
+            
+            if (response.password) {
+                const user = users.find(u => u.id === id);
+                if (user) {
+                    setCreatedCreds({ 
+                        username: user.username, 
+                        password: response.password,
+                        title: "Password Reset Successful"
+                    });
+                    toast.success("Password reset successfully");
+                }
+            }
         } catch (error) {
             toast.error("Failed to reset password");
         }
@@ -125,7 +140,7 @@ export default function UsersPage() {
 
             {createdCreds && (
                 <div className="bg-green-50 border border-green-200 p-4 rounded-md mb-6">
-                    <h3 className="font-bold text-green-800">User Created!</h3>
+                    <h3 className="font-bold text-green-800">{createdCreds.title}</h3>
                     <p className="text-sm text-green-700 mt-1">
                         Username: <strong>{createdCreds.username}</strong><br/>
                         Temporary Password: <strong className="font-mono bg-white px-1 rounded border">{createdCreds.password}</strong>
