@@ -154,70 +154,72 @@ export default function UsersPage() {
                 </div>
             )}
 
-            <div className="rounded-md border bg-white">
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Username</TableHead>
-                            <TableHead>Role</TableHead>
-                            <TableHead>Last Login</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {users.map(user => (
-                            <TableRow key={user.id} className={user.is_disabled ? "bg-gray-50 opacity-75" : ""}>
-                                <TableCell className="font-medium">
-                                    {user.username}
-                                    {user.is_disabled && <span className="ml-2 text-xs text-red-600 font-bold">(Disabled)</span>}
-                                </TableCell>
-                                <TableCell>
-                                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
-                                        user.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800'
-                                    }`}>
-                                        {user.role}
-                                    </span>
-                                </TableCell>
-                                <TableCell>
-                                    {user.last_login_at ? new Date(user.last_login_at).toLocaleString() : 'Never'}
-                                </TableCell>
-                                <TableCell>
-                                    <div className="flex flex-col gap-1">
-                                        {user.force_password_change && (
-                                            <span className="text-xs text-amber-600 font-semibold">
-                                                Password Reset Pending
-                                            </span>
-                                        )}
-                                        {user.is_disabled ? (
-                                            <span className="text-xs text-red-600 font-semibold flex items-center gap-1">
-                                                <Ban className="h-3 w-3" /> Disabled
-                                            </span>
-                                        ) : (
-                                            <span className="text-xs text-green-600 font-semibold flex items-center gap-1">
-                                                <CheckCircle className="h-3 w-3" /> Active
-                                            </span>
-                                        )}
-                                    </div>
-                                </TableCell>
-                                <TableCell className="text-right space-x-2">
-                                    <Button size="icon" variant="ghost" title={user.is_disabled ? "Enable User" : "Disable User"} onClick={() => toggleStatus(user)}>
-                                        {user.is_disabled ? <CheckCircle className="h-4 w-4 text-green-600" /> : <Ban className="h-4 w-4 text-red-600" />}
-                                    </Button>
-                                    <Button size="icon" variant="ghost" title="Toggle Role" onClick={() => toggleRole(user)}>
-                                        {user.role === 'admin' ? <ShieldOff className="h-4 w-4" /> : <Shield className="h-4 w-4" />}
-                                    </Button>
-                                    <Button size="icon" variant="ghost" title="Reset Password" onClick={() => handleResetPassword(user.id)}>
-                                        <RotateCcw className="h-4 w-4" />
-                                    </Button>
-                                    <Button size="icon" variant="ghost" className="text-red-500 hover:text-red-600 hover:bg-red-50" onClick={() => handleDelete(user.id)}>
-                                        <Trash2 className="h-4 w-4" />
-                                    </Button>
-                                </TableCell>
+            <div className="rounded-md border bg-white overflow-hidden">
+                <div className="overflow-x-auto">
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Username</TableHead>
+                                <TableHead>Role</TableHead>
+                                <TableHead>Last Login</TableHead>
+                                <TableHead>Status</TableHead>
+                                <TableHead className="text-right">Actions</TableHead>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                        </TableHeader>
+                        <TableBody>
+                            {users.map(user => (
+                                <TableRow key={user.id} className={user.is_disabled ? "bg-gray-50 opacity-75" : ""}>
+                                    <TableCell className="font-medium">
+                                        {user.username}
+                                        {user.is_disabled && <span className="ml-2 text-xs text-red-600 font-bold">(Disabled)</span>}
+                                    </TableCell>
+                                    <TableCell>
+                                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                                            user.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800'
+                                        }`}>
+                                            {user.role}
+                                        </span>
+                                    </TableCell>
+                                    <TableCell className="whitespace-nowrap">
+                                        {user.last_login_at ? new Date(user.last_login_at).toLocaleString() : 'Never'}
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className="flex flex-col gap-1 whitespace-nowrap">
+                                            {user.force_password_change && (
+                                                <span className="text-xs text-amber-600 font-semibold">
+                                                    Password Reset Pending
+                                                </span>
+                                            )}
+                                            {user.is_disabled ? (
+                                                <span className="text-xs text-red-600 font-semibold flex items-center gap-1">
+                                                    <Ban className="h-3 w-3" /> Disabled
+                                                </span>
+                                            ) : (
+                                                <span className="text-xs text-green-600 font-semibold flex items-center gap-1">
+                                                    <CheckCircle className="h-3 w-3" /> Active
+                                                </span>
+                                            )}
+                                        </div>
+                                    </TableCell>
+                                    <TableCell className="text-right space-x-2 whitespace-nowrap">
+                                        <Button size="icon" variant="ghost" title={user.is_disabled ? "Enable User" : "Disable User"} onClick={() => toggleStatus(user)}>
+                                            {user.is_disabled ? <CheckCircle className="h-4 w-4 text-green-600" /> : <Ban className="h-4 w-4 text-red-600" />}
+                                        </Button>
+                                        <Button size="icon" variant="ghost" title="Toggle Role" onClick={() => toggleRole(user)}>
+                                            {user.role === 'admin' ? <ShieldOff className="h-4 w-4" /> : <Shield className="h-4 w-4" />}
+                                        </Button>
+                                        <Button size="icon" variant="ghost" title="Reset Password" onClick={() => handleResetPassword(user.id)}>
+                                            <RotateCcw className="h-4 w-4" />
+                                        </Button>
+                                        <Button size="icon" variant="ghost" className="text-red-500 hover:text-red-600 hover:bg-red-50" onClick={() => handleDelete(user.id)}>
+                                            <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </div>
             </div>
         </div>
     );

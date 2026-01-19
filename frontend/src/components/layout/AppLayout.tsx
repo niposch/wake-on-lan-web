@@ -1,28 +1,56 @@
+import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Button } from '../ui/button';
-import { LayoutDashboard, Users, Server, LogOut, KeyRound } from 'lucide-react';
+import { LayoutDashboard, Users, Server, LogOut, KeyRound, Menu, X } from 'lucide-react';
 import { DemoBanner } from '../demo/DemoBanner';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
     const { user, logout } = useAuth();
     const location = useLocation();
+    const [isSidebarOpen, setSidebarOpen] = useState(false);
 
     const isActive = (path: string) => location.pathname === path;
     const isAdmin = user?.role === 'admin';
 
     const layoutContent = isAdmin ? (
-        <div className="flex h-full">
+        <div className="flex h-full flex-col md:flex-row">
+            {/* Mobile Header */}
+            <header className="bg-white border-b p-4 flex items-center justify-between md:hidden shrink-0">
+                <div className="font-bold text-xl flex items-center gap-2">
+                    <Server className="h-6 w-6" />
+                    WoL Manager
+                </div>
+                <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(true)}>
+                    <Menu className="h-6 w-6" />
+                </Button>
+            </header>
+
+            {/* Mobile Sidebar Overlay */}
+            {isSidebarOpen && (
+                <div 
+                    className="fixed inset-0 bg-black/50 z-[60] md:hidden"
+                    onClick={() => setSidebarOpen(false)}
+                />
+            )}
+
             {/* Sidebar */}
-            <aside className="w-64 bg-white border-r shadow-sm flex flex-col shrink-0">
-                <div className="p-6">
-                    <Link to="/" className="text-xl font-bold flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <aside className={`
+                fixed inset-y-0 left-0 z-[70] w-64 bg-white border-r shadow-lg transform transition-transform duration-200 ease-in-out flex flex-col
+                md:translate-x-0 md:static md:shadow-sm md:shrink-0
+                ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+            `}>
+                <div className="p-6 flex items-center justify-between">
+                    <Link to="/" className="text-xl font-bold flex items-center gap-2 hover:opacity-80 transition-opacity" onClick={() => setSidebarOpen(false)}>
                         <Server className="h-6 w-6" />
                         WoL Manager
                     </Link>
+                    <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setSidebarOpen(false)}>
+                        <X className="h-5 w-5" />
+                    </Button>
                 </div>
                 <nav className="px-4 space-y-2 flex-1">
-                    <Link to="/">
+                    <Link to="/" onClick={() => setSidebarOpen(false)}>
                         <Button 
                             variant={isActive('/') ? "secondary" : "ghost"} 
                             className="w-full justify-start gap-2"
@@ -32,7 +60,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                         </Button>
                     </Link>
                     
-                    <Link to="/users">
+                    <Link to="/users" onClick={() => setSidebarOpen(false)}>
                         <Button 
                             variant={isActive('/users') ? "secondary" : "ghost"} 
                             className="w-full justify-start gap-2"
@@ -46,7 +74,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                     <div className="px-2 pb-2 text-sm text-gray-500">
                         Logged in as <span className="font-semibold">{user?.username}</span>
                     </div>
-                    <Link to="/change-password" title="Change Password">
+                    <Link to="/change-password" title="Change Password" onClick={() => setSidebarOpen(false)}>
                         <Button 
                             variant={isActive('/change-password') ? "secondary" : "ghost"} 
                             className="w-full justify-start gap-2"
@@ -114,7 +142,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     );
 
     return (
-        <div className="h-screen flex flex-col overflow-hidden">
+        <div className="h-dvh flex flex-col overflow-hidden">
             <div className="flex-1 min-h-0">
                 {layoutContent}
             </div>
