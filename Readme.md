@@ -1,58 +1,84 @@
-# ⚡ Wake-on-LAN Web
+# Wake-on-LAN Web Manager
 
-A lightweight, self-hosted web interface to wake up and manage devices on your local network.
+A self-hosted web application to manage and wake devices on your local network.
 
-## 🏗 Architecture
+## Features
 
-This is a monolithic repository containing three distinct parts:
+- **Dashboard:** View device status (Online/Offline) and wake/shutdown them.
+- **Device Management:** Add, edit, and delete devices (MAC address, IP, etc.).
+- **User Management:** Admin role can create users, reset passwords, and manage permissions.
+- **Authentication:** JWT-based login with forced password change on first login.
+- **Agent Integration:** Optional agent for remote shutdown (Windows/Linux/macOS).
+- **Pinger:** Background task checks device availability every minute.
 
-* **Frontend:** A React Single Page Application (SPA) built with Vite and Bun.
-* **Backend:** A Rust (Axum) API that serves the frontend, manages the SQLite database, and handles networking (WoL packets / ICMP pings).
-* **Agent (Optional):** A lightweight background service running on target PCs to handle remote shutdown.
-
-## 🚀 Quick Start
+## Getting Started
 
 ### Prerequisites
-* **Rust:** `1.75+`
-* **Bun:** `1.0+`
-* **Node.js:** (Required for some Vite internal tooling)
 
-### 1. Setup Backend
-```bash
-cd backend
-# Create the .env file
-echo "DATABASE_URL=sqlite:wol.db" > .env
-# Initialize Database & Migrations
-sqlx database create
-sqlx migrate run
-# Run the server
-cargo run
+- Rust (latest stable)
+- Node.js & npm
+- SQLite3
 
-```
+### Backend Setup
 
-### 2. Setup Frontend
+1.  Navigate to `backend`:
+    ```bash
+    cd backend
+    ```
+2.  Install dependencies and build:
+    ```bash
+    cargo build --release
+    ```
+3.  Run migrations (creates `wol.db`):
+    ```bash
+    # Install sqlx-cli if needed: cargo install sqlx-cli
+    sqlx migrate run
+    ```
+4.  Start the server and initialize the admin user:
+    ```bash
+    # First run to set admin password
+    cargo run -- --admin-password "secret123"
+    ```
+    *Subsequent runs can omit the `--admin-password` flag unless you want to reset it.*
 
-```bash
-cd frontend
-# Install dependencies
-bun install
-# Start Dev Server (with proxy to backend)
-bun dev
+The API will be available at `http://localhost:3000`.
+Swagger UI: `http://localhost:3000/swagger/`
 
-```
+### Frontend Setup
 
-### 3. Production Build
+1.  Navigate to `frontend`:
+    ```bash
+    cd frontend
+    ```
+2.  Install dependencies:
+    ```bash
+    npm install
+    ```
+3.  Build for production:
+    ```bash
+    npm run build
+    ```
+    The output will be in `dist/`.
 
-To run the app as a single binary:
+### Running in Production
 
-1. Build the frontend: `cd frontend && bun run build`
-2. Run the backend: `cd backend && cargo run --release`
-3. The Rust server will serve the static files from `frontend/dist` at `http://localhost:3000`.
+To serve the frontend from the backend:
 
-## 🛠 Tech Stack
+1.  Create a `static_files` directory in the `backend` root.
+2.  Copy the contents of `frontend/dist` to `backend/static_files`.
+3.  Run the backend binary.
 
-* **Language:** Rust & TypeScript
-* **Database:** SQLite (via SQLx)
-* **UI Framework:** React + Tailwind CSS v4 + shadcn/ui
-* **Web Server:** Axum
+## Development
 
+- **Backend:** `cargo run` (Port 3000)
+- **Frontend:** `npm run dev` (Port 5173 - Proxy configured to forward API calls to 3000)
+
+## Security Note
+
+- The background pinger requires raw socket privileges on some OSs (like Linux). You may need to run the binary with `sudo` or set capabilities: `setcap cap_net_raw+ep ./target/release/backend`.
+- Windows usually allows ping without special privileges if run as a standard user, or requires Admin if using raw sockets depending on the implementation of `surge-ping`.
+
+## Architecture
+
+- **Backend:** Axum (Rust), SQLx (SQLite), Tokio, JsonWebToken.
+- **Frontend:** React, Vite, Shadcn UI, Tailwind CSS, Axios.

@@ -5,13 +5,19 @@ edition = "2024"
 
 [dependencies]
 argon2 = "0.5.3"
+async-trait = "0.1.89"
 axum = "0.8.8"
+axum-extra = { version = "0.12.5", features = ["typed-header"] }
 chrono = { version = "0.4.43", features = ["serde"] }
+clap = { version = "4.5.54", features = ["derive"] }
+jsonwebtoken = { version = "10.2.0", features = ["default", "rust_crypto", "use_pem"] }
 rand = "0.9.2"
 rand_core = { version = "0.6", features = ["std"] }
+reqwest = { version = "0.13.1", features = ["json"] }
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.149"
 sqlx = { version = "0.8.6", features = ["runtime-tokio-rustls", "sqlite", "chrono"] }
+surge-ping = "0.8.4"
 tokio = { version = "1.49.0", features = ["full"] }
 tower = "0.5.3"
 tower-http = { version = "0.6.8", features = ["fs", "cors", "trace"] }

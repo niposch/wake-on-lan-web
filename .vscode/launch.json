@@ -26,7 +26,11 @@
       "url": "http://localhost:5173",
       // This maps the files in Chrome devtools back to your source code
       "webRoot": "${workspaceFolder}/frontend/src",
-      "userDataDir": "${workspaceFolder}/.vscode/chrome-debug-profile"
+      "userDataDir": "${workspaceFolder}/.vscode/chrome-debug-profile",
+      "runtimeArgs": [
+        "--admin-password",
+        "Test123!"
+      ]
     }
   ],
   "compounds": [

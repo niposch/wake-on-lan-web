@@ -1,18 +1,72 @@
-"use client"
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import LoginPage from './pages/Login';
+import Dashboard from './pages/Dashboard';
+import UsersPage from './pages/Users';
+import ChangePasswordPage from './pages/ChangePassword';
+import AppLayout from './components/layout/AppLayout';
+import { Toaster } from './components/ui/sonner';
 
-import * as React from "react"
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+    const { user, isLoading } = useAuth();
 
-import { Calendar } from "@/components/ui/calendar"
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
+
+    if (!user) {
+        return <Navigate to="/login" replace />;
+    }
+
+    if (user.force_password_change && window.location.pathname !== '/change-password') {
+        return <Navigate to="/change-password" replace />;
+    }
+
+    return <AppLayout>{children}</AppLayout>;
+}
+
+function AdminRoute({ children }: { children: React.ReactNode }) {
+    const { user, isLoading } = useAuth();
+
+    if (isLoading) return <div>Loading...</div>;
+    
+    if (user?.role !== 'admin') {
+        return <Navigate to="/" replace />;
+    }
+
+    return <>{children}</>;
+}
+
 export default function App() {
-  const [date, setDate] = React.useState<Date | undefined>(new Date())
+    return (
+        <AuthProvider>
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/login" element={<LoginPage />} />
+                    
+                    <Route path="/change-password" element={
+                        <ProtectedRoute>
+                            <ChangePasswordPage />
+                        </ProtectedRoute>
+                    } />
 
-  return (
-    <Calendar
-      mode="single"
-      selected={date}
-      onSelect={setDate}
-      className="rounded-md border shadow-sm"
-      captionLayout="dropdown"
-    />
-  )
+                    <Route path="/" element={
+                        <ProtectedRoute>
+                            <Dashboard />
+                        </ProtectedRoute>
+                    } />
+                    
+                    <Route path="/users" element={
+                        <ProtectedRoute>
+                            <AdminRoute>
+                                <UsersPage />
+                            </AdminRoute>
+                        </ProtectedRoute>
+                    } />
+                </Routes>
+                <Toaster />
+            </BrowserRouter>
+        </AuthProvider>
+    );
 }
